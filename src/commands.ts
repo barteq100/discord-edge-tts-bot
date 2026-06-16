@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { ChannelType, SlashCommandBuilder } from "discord.js";
 import { CURATED_VOICES } from "./voices.js";
 
 export const slashCommands = [
@@ -8,6 +8,19 @@ export const slashCommands = [
   new SlashCommandBuilder()
     .setName("leave")
     .setDescription("Leave the current voice channel and clear the TTS queue."),
+  new SlashCommandBuilder()
+    .setName("listen")
+    .setDescription("Read new messages from a text channel into your current voice channel.")
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("Text channel to read aloud.")
+        .addChannelTypes(ChannelType.GuildText)
+        .setRequired(true)
+    ),
+  new SlashCommandBuilder()
+    .setName("unlisten")
+    .setDescription("Stop reading messages from the current text channel listener."),
   new SlashCommandBuilder()
     .setName("say")
     .setDescription("Speak text in your current voice channel.")

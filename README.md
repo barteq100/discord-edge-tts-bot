@@ -17,6 +17,8 @@ The bot joins the user's current voice channel, generates speech with Edge neura
 - Slash commands:
   - `/join`
   - `/leave`
+  - `/listen channel:#text-channel`
+  - `/unlisten`
   - `/say text:string`
   - `/voice voice:string`
   - `/voices`
@@ -38,19 +40,21 @@ The bot joins the user's current voice channel, generates speech with Edge neura
 3. Give it a name, then open the application.
 4. Go to **Bot**.
 5. Click **Reset Token** or **View Token**, then copy the token into `.env` as `DISCORD_TOKEN`.
-6. Go to **OAuth2**.
-7. Copy the **Client ID** into `.env` as `DISCORD_CLIENT_ID`.
-8. Under **OAuth2 > URL Generator**, select these scopes:
+6. Under **Privileged Gateway Intents**, enable **Message Content Intent** if you want to use `/listen`.
+7. Go to **OAuth2**.
+8. Copy the **Client ID** into `.env` as `DISCORD_CLIENT_ID`.
+9. Under **OAuth2 > URL Generator**, select these scopes:
    - `bot`
    - `applications.commands`
-9. Select these bot permissions:
+10. Select these bot permissions:
    - `View Channels`
    - `Send Messages`
+   - `Read Message History`
    - `Connect`
    - `Speak`
    - `Use Voice Activity`
-10. Open the generated invite URL and add the bot to your server.
-11. Optional for development: enable Discord developer mode, right-click your test server, and copy the server ID into `.env` as `DISCORD_GUILD_ID`.
+11. Open the generated invite URL and add the bot to your server.
+12. Optional for development: enable Discord developer mode, right-click your test server, and copy the server ID into `.env` as `DISCORD_GUILD_ID`.
 
 If `DISCORD_GUILD_ID` is set, guild commands are used so command updates appear quickly in that server. If it is blank, global commands are registered instead and work anywhere the bot is invited.
 
@@ -111,6 +115,22 @@ npm run start
 - `pl-PL-MarekNeural`
 
 The default is `en-US-JennyNeural`. You can change it with `DEFAULT_VOICE` or per server with `/voice`.
+
+## Reading A Text Channel
+
+To read new messages from a text channel into voice:
+
+```text
+/listen channel:#general
+```
+
+The bot joins your current voice channel and speaks new messages posted in the selected text channel. It ignores bot messages and trims long messages.
+
+Stop the listener with:
+
+```text
+/unlisten
+```
 
 ## Acceptance Test
 

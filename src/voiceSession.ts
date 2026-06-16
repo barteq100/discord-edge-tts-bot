@@ -12,6 +12,7 @@ import {
 import type {
   ChatInputCommandInteraction,
   GuildMember,
+  Guild,
   VoiceBasedChannel
 } from "discord.js";
 import ffmpegStatic from "ffmpeg-static";
@@ -80,18 +81,28 @@ export class VoiceSessionManager {
   ): Promise<{ channel: VoiceBasedChannel; position: number }> {
     const channel = await this.join(interaction);
     const guildId = interaction.guildId!;
+    const position = this.enqueueForGuild(guildId, text, interaction.user.tag);
+
+    return { channel, position };
+  }
+
+  enqueueForGuild(guildId: string, text: string, requestedBy: string): number {
     const session = this.getSession(guildId);
+
+    if (!session.connection && !getVoiceConnection(guildId)) {
+      throw new Error("The bot is not connected to a voice channel.");
+    }
 
     session.queue.push({
       text,
       voice: session.voice,
-      requestedBy: interaction.user.tag
+      requestedBy
     });
 
     const position = session.queue.length;
     void this.processQueue(guildId);
 
-    return { channel, position };
+    return position;
   }
 
   stop(guildId: string): void {

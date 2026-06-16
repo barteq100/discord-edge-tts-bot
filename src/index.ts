@@ -1,8 +1,10 @@
 import {
+  ChannelType,
   ChatInputCommandInteraction,
   Client,
   Events,
-  GatewayIntentBits
+  GatewayIntentBits,
+  Message
 } from "discord.js";
 import { loadConfig } from "./config.js";
 import { CURATED_VOICES, isCuratedVoice } from "./voices.js";
@@ -10,9 +12,16 @@ import { VoiceSessionManager } from "./voiceSession.js";
 
 const config = loadConfig();
 const voiceSessions = new VoiceSessionManager(config.defaultVoice);
+const textListeners = new Map<string, string>();
+const MAX_LISTEN_MESSAGE_LENGTH = 500;
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.MessageContent
+  ]
 });
 
 client.once(Events.ClientReady, (readyClient) => {
@@ -38,6 +47,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
+client.on(Events.MessageCreate, async (message) => {
+  await handleListenedMessage(message);
+});
+
 async function handleCommand(interaction: ChatInputCommandInteraction): Promise<void> {
   if (!interaction.guildId) {
     await interaction.reply({ content: "Use this bot in a server.", ephemeral: true });
@@ -53,8 +66,33 @@ async function handleCommand(interaction: ChatInputCommandInteraction): Promise<
     }
 
     case "leave": {
+      textListeners.delete(interaction.guildId);
       voiceSessions.leave(interaction.guildId);
       await interaction.reply({ content: "Left voice and cleared the queue.", ephemeral: true });
+      return;
+    }
+
+    case "listen": {
+      const channel = interaction.options.getChannel("channel", true);
+
+      if (channel.type !== ChannelType.GuildText) {
+        await interaction.reply({ content: "Choose a text channel.", ephemeral: true });
+        return;
+      }
+
+      await interaction.deferReply({ ephemeral: true });
+      await voiceSessions.join(interaction);
+      textListeners.set(interaction.guildId, channel.id);
+      await interaction.editReply(`Now reading new messages from ${channel}.`);
+      return;
+    }
+
+    case "unlisten": {
+      const wasListening = textListeners.delete(interaction.guildId);
+      await interaction.reply({
+        content: wasListening ? "Stopped reading text-channel messages." : "No text-channel listener was active.",
+        ephemeral: true
+      });
       return;
     }
 
@@ -109,6 +147,45 @@ async function handleCommand(interaction: ChatInputCommandInteraction): Promise<
     default:
       await interaction.reply({ content: "Unknown command.", ephemeral: true });
   }
+}
+
+async function handleListenedMessage(message: Message): Promise<void> {
+  if (!message.guildId || message.author.bot) {
+    return;
+  }
+
+  const listenedChannelId = textListeners.get(message.guildId);
+  if (message.channelId !== listenedChannelId) {
+    return;
+  }
+
+  const text = normalizeMessageForSpeech(message);
+  if (!text) {
+    return;
+  }
+
+  try {
+    voiceSessions.enqueueForGuild(message.guildId, text, message.author.tag);
+  } catch (error) {
+    console.error(`[${message.guildId}] Failed to enqueue listened message:`, error);
+  }
+}
+
+function normalizeMessageForSpeech(message: Message): string {
+  const content = message.cleanContent.trim().replace(/\s+/g, " ");
+
+  if (!content) {
+    return "";
+  }
+
+  if (content.length <= MAX_LISTEN_MESSAGE_LENGTH) {
+    return `${message.member?.displayName ?? message.author.username} says: ${content}`;
+  }
+
+  return `${message.member?.displayName ?? message.author.username} says: ${content.slice(
+    0,
+    MAX_LISTEN_MESSAGE_LENGTH
+  )}...`;
 }
 
 await client.login(config.discordToken);
