@@ -97,8 +97,11 @@ npm run start
 `/voices` lists this curated set:
 
 - `en-US-JennyNeural`
+- `en-US-AnaNeural`
 - `en-US-AriaNeural`
+- `en-US-AvaNeural`
 - `en-US-GuyNeural`
+- `en-GB-MaisieNeural`
 - `en-GB-SoniaNeural`
 - `pl-PL-ZofiaNeural`
 - `pl-PL-MarekNeural`
