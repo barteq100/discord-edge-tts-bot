@@ -119,6 +119,7 @@ npm run start
 - `en-GB-MaisieNeural`
 - `en-GB-SoniaNeural`
 - `ko-KR-SunHiNeural`
+- `zh-CN-XiaoxiaoNeural`
 - `pl-PL-ZofiaNeural`
 - `pl-PL-MarekNeural`
 

@@ -14,6 +14,7 @@ export const CURATED_VOICES = [
   "en-GB-MaisieNeural",
   "en-GB-SoniaNeural",
   "ko-KR-SunHiNeural",
+  "zh-CN-XiaoxiaoNeural",
   "pl-PL-ZofiaNeural",
   "pl-PL-MarekNeural"
 ] as const;
