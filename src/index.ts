@@ -138,6 +138,41 @@ async function handleCommand(interaction: ChatInputCommandInteraction): Promise<
       return;
     }
 
+    case "rate": {
+      const rate = interaction.options.getInteger("value", true);
+      voiceSessions.setRate(interaction.guildId, rate);
+      await interaction.reply({ content: `Speech rate set to ${rate}.`, ephemeral: true });
+      return;
+    }
+
+    case "pitch": {
+      const pitch = interaction.options.getInteger("value", true);
+      voiceSessions.setPitch(interaction.guildId, pitch);
+      await interaction.reply({ content: `Speech pitch set to ${pitch} Hz.`, ephemeral: true });
+      return;
+    }
+
+    case "volume": {
+      const volume = interaction.options.getInteger("value", true);
+      voiceSessions.setVolume(interaction.guildId, volume);
+      await interaction.reply({ content: `Speech volume set to ${volume}.`, ephemeral: true });
+      return;
+    }
+
+    case "settings": {
+      const settings = voiceSessions.getSettings(interaction.guildId);
+      await interaction.reply({
+        content: [
+          `Voice: ${voiceSessions.getVoice(interaction.guildId)}`,
+          `Rate: ${settings.rate}`,
+          `Pitch: ${settings.pitch} Hz`,
+          `Volume: ${settings.volume}`
+        ].join("\n"),
+        ephemeral: true
+      });
+      return;
+    }
+
     case "stop": {
       voiceSessions.stop(interaction.guildId);
       await interaction.reply({ content: "Stopped playback and cleared the queue.", ephemeral: true });

@@ -50,6 +50,42 @@ export const slashCommands = [
     .setName("voices")
     .setDescription("List the curated voices supported by this bot."),
   new SlashCommandBuilder()
+    .setName("rate")
+    .setDescription("Set speech rate for this server.")
+    .addIntegerOption((option) =>
+      option
+        .setName("value")
+        .setDescription("Speech rate from -50 slower to 50 faster.")
+        .setRequired(true)
+        .setMinValue(-50)
+        .setMaxValue(50)
+    ),
+  new SlashCommandBuilder()
+    .setName("pitch")
+    .setDescription("Set speech pitch for this server.")
+    .addIntegerOption((option) =>
+      option
+        .setName("value")
+        .setDescription("Pitch in Hz from -50 lower to 50 higher.")
+        .setRequired(true)
+        .setMinValue(-50)
+        .setMaxValue(50)
+    ),
+  new SlashCommandBuilder()
+    .setName("volume")
+    .setDescription("Set speech volume for this server.")
+    .addIntegerOption((option) =>
+      option
+        .setName("value")
+        .setDescription("Volume from 0 to 100.")
+        .setRequired(true)
+        .setMinValue(0)
+        .setMaxValue(100)
+    ),
+  new SlashCommandBuilder()
+    .setName("settings")
+    .setDescription("Show current TTS voice, rate, pitch, and volume."),
+  new SlashCommandBuilder()
     .setName("stop")
     .setDescription("Stop current speech and clear queued messages.")
 ].map((command) => command.toJSON());

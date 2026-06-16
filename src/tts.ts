@@ -8,12 +8,31 @@ export interface TtsAudioFile {
   cleanup: () => Promise<void>;
 }
 
-export async function synthesizeToTempFile(text: string, voice: string): Promise<TtsAudioFile> {
+export interface TtsSettings {
+  rate: number;
+  pitch: number;
+  volume: number;
+}
+
+export const DEFAULT_TTS_SETTINGS: TtsSettings = {
+  rate: 0,
+  pitch: 0,
+  volume: 100
+};
+
+export async function synthesizeToTempFile(
+  text: string,
+  voice: string,
+  settings: TtsSettings = DEFAULT_TTS_SETTINGS
+): Promise<TtsAudioFile> {
   const dir = await mkdtemp(path.join(tmpdir(), "discord-edge-tts-"));
   const basePath = path.join(dir, "speech");
   const tts = new EdgeTTS();
 
   await tts.synthesize(text, voice, {
+    pitch: settings.pitch,
+    rate: settings.rate,
+    volume: settings.volume,
     outputFormat: Constants.OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3
   });
 

@@ -22,6 +22,10 @@ The bot joins the user's current voice channel, generates speech with Edge neura
   - `/say text:string`
   - `/voice voice:string`
   - `/voices`
+  - `/rate value:integer`
+  - `/pitch value:integer`
+  - `/volume value:integer`
+  - `/settings`
   - `/stop`
 - Per-server voice selection
 - Per-server queued speech playback
@@ -118,6 +122,34 @@ npm run start
 - `pl-PL-MarekNeural`
 
 The default is `en-US-JennyNeural`. You can change it with `DEFAULT_VOICE` or per server with `/voice`.
+
+## Voice Controls
+
+Change the server's TTS voice:
+
+```text
+/voice voice:en-US-AnaNeural
+```
+
+Adjust delivery:
+
+```text
+/rate value:-15
+/pitch value:10
+/volume value:90
+```
+
+Ranges:
+
+- `rate`: `-50` to `50`
+- `pitch`: `-50` to `50` Hz
+- `volume`: `0` to `100`
+
+Show current values:
+
+```text
+/settings
+```
 
 ## Reading A Text Channel
 

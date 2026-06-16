@@ -12,11 +12,10 @@ import {
 import type {
   ChatInputCommandInteraction,
   GuildMember,
-  Guild,
   VoiceBasedChannel
 } from "discord.js";
 import ffmpegStatic from "ffmpeg-static";
-import { synthesizeToTempFile } from "./tts.js";
+import { DEFAULT_TTS_SETTINGS, synthesizeToTempFile, type TtsSettings } from "./tts.js";
 
 const ffmpegPath = ffmpegStatic as unknown as string | null;
 
@@ -27,6 +26,7 @@ if (ffmpegPath) {
 interface QueuedSpeech {
   text: string;
   voice: string;
+  settings: TtsSettings;
   requestedBy: string;
 }
 
@@ -36,6 +36,7 @@ interface GuildVoiceSession {
   queue: QueuedSpeech[];
   isProcessing: boolean;
   voice: string;
+  settings: TtsSettings;
 }
 
 export class VoiceSessionManager {
@@ -49,6 +50,22 @@ export class VoiceSessionManager {
 
   setVoice(guildId: string, voice: string): void {
     this.getSession(guildId).voice = voice;
+  }
+
+  getSettings(guildId: string): TtsSettings {
+    return { ...this.getSession(guildId).settings };
+  }
+
+  setRate(guildId: string, rate: number): void {
+    this.getSession(guildId).settings.rate = rate;
+  }
+
+  setPitch(guildId: string, pitch: number): void {
+    this.getSession(guildId).settings.pitch = pitch;
+  }
+
+  setVolume(guildId: string, volume: number): void {
+    this.getSession(guildId).settings.volume = volume;
   }
 
   async join(interaction: ChatInputCommandInteraction): Promise<VoiceBasedChannel> {
@@ -96,6 +113,7 @@ export class VoiceSessionManager {
     session.queue.push({
       text,
       voice: session.voice,
+      settings: { ...session.settings },
       requestedBy
     });
 
@@ -135,7 +153,8 @@ export class VoiceSessionManager {
         player,
         queue: [],
         isProcessing: false,
-        voice: this.defaultVoice
+        voice: this.defaultVoice,
+        settings: { ...DEFAULT_TTS_SETTINGS }
       };
       this.sessions.set(guildId, session);
     }
@@ -172,8 +191,10 @@ export class VoiceSessionManager {
       let cleanup: (() => Promise<void>) | undefined;
 
       try {
-        console.log(`[${guildId}] Speaking for ${item.requestedBy} with ${item.voice}`);
-        const audio = await synthesizeToTempFile(item.text, item.voice);
+        console.log(
+          `[${guildId}] Speaking for ${item.requestedBy} with ${item.voice} rate=${item.settings.rate} pitch=${item.settings.pitch} volume=${item.settings.volume}`
+        );
+        const audio = await synthesizeToTempFile(item.text, item.voice, item.settings);
         cleanup = audio.cleanup;
         const resource = createAudioResource(audio.path);
 
