@@ -4,7 +4,7 @@ import { DEFAULT_VOICE, isCuratedVoice } from "./voices.js";
 export interface BotConfig {
   discordToken: string;
   discordClientId: string;
-  discordGuildId: string;
+  discordGuildId?: string;
   defaultVoice: string;
 }
 
@@ -30,7 +30,7 @@ export function loadConfig(): BotConfig {
   return {
     discordToken: requireEnv("DISCORD_TOKEN"),
     discordClientId: requireEnv("DISCORD_CLIENT_ID"),
-    discordGuildId: requireEnv("DISCORD_GUILD_ID"),
+    discordGuildId: process.env.DISCORD_GUILD_ID?.trim() || undefined,
     defaultVoice
   };
 }

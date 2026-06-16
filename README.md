@@ -49,10 +49,10 @@ The bot joins the user's current voice channel, generates speech with Edge neura
    - `Connect`
    - `Speak`
    - `Use Voice Activity`
-10. Open the generated invite URL and add the bot to your test server.
-11. Enable Discord developer mode, right-click your server, and copy the server ID into `.env` as `DISCORD_GUILD_ID`.
+10. Open the generated invite URL and add the bot to your server.
+11. Optional for development: enable Discord developer mode, right-click your test server, and copy the server ID into `.env` as `DISCORD_GUILD_ID`.
 
-Guild commands are used so command updates appear quickly in your test server.
+If `DISCORD_GUILD_ID` is set, guild commands are used so command updates appear quickly in that server. If it is blank, global commands are registered instead and work anywhere the bot is invited.
 
 ## Installation
 
@@ -72,9 +72,11 @@ Fill in:
 ```dotenv
 DISCORD_TOKEN=your_discord_bot_token_here
 DISCORD_CLIENT_ID=your_discord_application_client_id_here
-DISCORD_GUILD_ID=your_test_server_guild_id_here
+DISCORD_GUILD_ID=
 DEFAULT_VOICE=en-US-JennyNeural
 ```
+
+`DISCORD_CLIENT_ID` is required to register slash commands for your Discord application. `DISCORD_GUILD_ID` is optional: leave it blank for global commands, or set it while developing for faster command updates in one test server.
 
 ## Scripts
 
@@ -85,7 +87,7 @@ npm run build
 npm run start
 ```
 
-- `register`: registers slash commands in `DISCORD_GUILD_ID`
+- `register`: registers slash commands globally, or in `DISCORD_GUILD_ID` when that value is set
 - `dev`: runs the bot with TypeScript watch mode
 - `build`: compiles TypeScript into `dist`
 - `start`: runs the compiled bot from `dist`
@@ -115,7 +117,7 @@ npm run dev
 
 Then:
 
-1. Join a Discord voice channel in the configured guild.
+1. Join a Discord voice channel in a server where the bot is invited.
 2. Run `/say text:"hello from edge tts"`.
 3. The bot should join your voice channel and speak the text.
 
