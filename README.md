@@ -100,7 +100,11 @@ npm run start
 - `en-US-AnaNeural`
 - `en-US-AriaNeural`
 - `en-US-AvaNeural`
+- `en-US-AvaMultilingualNeural`
+- `en-US-EmmaNeural`
+- `en-US-EmmaMultilingualNeural`
 - `en-US-GuyNeural`
+- `en-US-MichelleNeural`
 - `en-GB-MaisieNeural`
 - `en-GB-SoniaNeural`
 - `pl-PL-ZofiaNeural`
