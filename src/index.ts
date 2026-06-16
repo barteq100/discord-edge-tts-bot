@@ -179,13 +179,10 @@ function normalizeMessageForSpeech(message: Message): string {
   }
 
   if (content.length <= MAX_LISTEN_MESSAGE_LENGTH) {
-    return `${message.member?.displayName ?? message.author.username} says: ${content}`;
+    return content;
   }
 
-  return `${message.member?.displayName ?? message.author.username} says: ${content.slice(
-    0,
-    MAX_LISTEN_MESSAGE_LENGTH
-  )}...`;
+  return `${content.slice(0, MAX_LISTEN_MESSAGE_LENGTH)}...`;
 }
 
 await client.login(config.discordToken);
