@@ -13,6 +13,7 @@ export const CURATED_VOICES = [
   "en-GB-LibbyNeural",
   "en-GB-MaisieNeural",
   "en-GB-SoniaNeural",
+  "ja-JP-NanamiNeural",
   "ko-KR-SunHiNeural",
   "zh-CN-XiaoxiaoNeural",
   "pl-PL-ZofiaNeural",
