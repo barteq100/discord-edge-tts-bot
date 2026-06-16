@@ -109,6 +109,9 @@ npm run start
 - `en-US-EmmaMultilingualNeural`
 - `en-US-GuyNeural`
 - `en-US-MichelleNeural`
+- `en-AU-NatashaNeural`
+- `en-CA-ClaraNeural`
+- `en-GB-LibbyNeural`
 - `en-GB-MaisieNeural`
 - `en-GB-SoniaNeural`
 - `pl-PL-ZofiaNeural`
